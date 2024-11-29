@@ -85,10 +85,13 @@ def deploy_image_app_task(deployment_id: str, app_name: str, image: str, plan_na
     logger.info("Deploying app...")
     full_image = f"{image}"
     deploy_logs = provisioner.deploy_app(app_name=app_name, image=full_image)
+    last_log = None
     for log in deploy_logs:
         logger.info(log)
+        last_log = log
     logger.info("Deploying app...done")
     redis_client.set(f"{deployment_id}:status", "deployed")
+    return last_log
 
 
 @celery_app.task(name="scale_app")

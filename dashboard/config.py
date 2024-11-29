@@ -15,6 +15,7 @@ class Settings:
     celery_broker_url = env.str("CELERY_BROKER_URL", "redis://localhost:6379")
     deploy_service_url = env.str("DEPLOY_SERVICE_URL", "http://localhost:8080")
     redis_url = env.str("REDIS_URL", "redis://localhost:6379")
+    auth_userinfo_url = env.str("0AUTH_USERINFO", "https://dev-u67s63gaoytg80ad.us.auth0.com/userinfo")
 
 
 settings = Settings()

@@ -10,10 +10,12 @@ from .routes.user import router as user_router
 
 start_mappers()
 app = FastAPI(title="Dashboard API", version="0.1.0", description="Dashboard API")
-origins = [
-    "http://localhost",
-    "http://localhost:9000",
-]
+# origins = [
+#     "http://localhost",
+#     "http://localhost:9000",
+# ]
+
+origins = "*"
 
 app.add_middleware(
     CORSMiddleware,

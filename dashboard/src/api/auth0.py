@@ -67,8 +67,8 @@ async def get_user_info(redis_client, sub, token):
 
     @async_retry_decorator(retries=3, delay=1)
     async def _call_api():
-        # url = "https://appengine.jp.auth0.com/userinfo"
-        url = "https://dev-u67s63gaoytg80ad.us.auth0.com/userinfo"
+        from config import settings
+        url = settings.auth_userinfo_url
         payload = {}
         headers = {
             "Authorization": f"Bearer {token}"
