@@ -75,7 +75,7 @@ class TsuruProvisioner(Provisioner):
                 "name": app_name,
                 "plan": plan,
                 "pool": "local",
-                "platform": "static",
+                "platform": "python",
                 "description": description or "",
                 "teamOwner": "admin",
                 "metadata": {}
