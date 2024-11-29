@@ -2,7 +2,7 @@
 name = "billing"
 version = "0.1.0"
 description = ""
-authors = ["vuonglv"]
+authors = ["hoangtd"]
 readme = "README.md"
 
 [tool.poetry.dependencies]

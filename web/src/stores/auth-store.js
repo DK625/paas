@@ -6,7 +6,7 @@ export const useAuthStore = defineStore('auth', {
     accessToken: null,
     currentUser: {
       id: 'user1',
-      name: 'Vuong Le Van'
+      name: 'Hoang Trinh Duc'
     },
     currentAuthUser: null
   }),

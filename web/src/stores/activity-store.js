@@ -6,8 +6,8 @@ const rawActivities = [
   {
     activity_id: 1,
     user: {
-      username: 'vuonglv',
-      full_name: 'Lê Văn Vương',
+      username: 'hoangtd',
+      full_name: 'Trịnh Đức Hoàng',
       avatar: 'https://i.pravatar.cc/150?img=1'
     },
     activity_type: 'create',
@@ -17,8 +17,8 @@ const rawActivities = [
   {
     activity_id: 2,
     user: {
-      username: 'vuonglv',
-      full_name: 'Lê Văn Vương',
+      username: 'hoangtd',
+      full_name: 'Trịnh Đức Hoàng',
       avatar: 'https://i.pravatar.cc/150?img=1'
     },
     activity_type: 'release',
@@ -28,8 +28,8 @@ const rawActivities = [
   {
     activity_id: 3,
     user: {
-      username: 'vuonglv',
-      full_name: 'Lê Văn Vương',
+      username: 'hoangtd',
+      full_name: 'Trịnh Đức Hoàng',
       avatar: 'https://i.pravatar.cc/150?img=1'
     },
     activity_type: 'release',
@@ -39,8 +39,8 @@ const rawActivities = [
   {
     activity_id: 4,
     user: {
-      username: 'vuonglv',
-      full_name: 'Lê Văn Vương',
+      username: 'hoangtd',
+      full_name: 'Trịnh Đức Hoàng',
       avatar: 'https://i.pravatar.cc/150?img=1'
     },
     activity_type: 'release',

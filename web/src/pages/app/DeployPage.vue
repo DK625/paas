@@ -65,7 +65,7 @@
                       <q-input
                         v-model="dockerImage"
                         label="Docker Image"
-                        hint="Ví dụ: vuonglv/sample-api:latest"
+                        hint="Ví dụ: cr-hn-1.bizflycloud.vn/4bc7e981f6a241828e11fe9bc693afb3/fastapi-app:latest"
                         outlined
                         class="my-input q-mt-md"
                       />
