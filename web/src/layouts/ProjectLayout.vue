@@ -6,7 +6,7 @@
 
         <q-toolbar-title>
           <q-avatar>
-            <img src="https://appengine.hn.ss.bfcplatform.vn/logo.png">
+            <img src="/logo.png">
           </q-avatar>
           <span class="q-ml-sm text-uppercase">Auto Infra</span>
         </q-toolbar-title>
@@ -84,7 +84,7 @@
           <q-item-section>Chi phí sử dụng</q-item-section>
         </q-item>
 
-        <q-item
+        <!-- <q-item
           clickable
           v-ripple
           :to="{ name: 'project.settings' }"
@@ -97,7 +97,7 @@
           </q-item-section>
 
           <q-item-section>Cài Đặt</q-item-section>
-        </q-item>
+        </q-item> -->
         <q-item
           v-if="isAuthenticated"
           clickable
