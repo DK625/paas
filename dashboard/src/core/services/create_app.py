@@ -8,7 +8,7 @@ from src.services.unit_of_work import UnitOfWork
 
 
 def platform_validator(_, __, value):
-    if value not in ["go", "python", "static", "buildpack"]:
+    if value not in ["go", "python", "static", "buildpack", "java", "nodejs", "php", "vuejs", "auto"]:
         raise ValueError("Nền tảng không hợp lệ")
 
 

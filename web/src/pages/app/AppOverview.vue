@@ -3,10 +3,7 @@
     <div class="row">
       <q-inner-loading :showing="loading">
         <div class="row">
-          <q-spinner-ios
-            color="primary"
-            size="4em"
-          />
+          <q-spinner-ios color="primary" size="4em" />
         </div>
       </q-inner-loading>
       <div class="col-xs-12 col-md-8 q-pa-sm">
@@ -15,10 +12,14 @@
             <q-card-section>
               <div class="text-h6">Thông tin ứng dụng</div>
             </q-card-section>
-            <q-separator/>
+            <q-separator />
             <q-card-section>
               <div class="row">
-                <div v-for="field in appFields" :key="field.name" class="col-xs-12 col-md-6 q-pa-sm">
+                <div
+                  v-for="field in appFields"
+                  :key="field.name"
+                  class="col-xs-12 col-md-6 q-pa-sm"
+                >
                   <div class="text-subtitle1 q-pl-sm">{{ field.label }}</div>
                   <div class="text-subtitle2 q-pl-sm">{{ field.value }}</div>
                 </div>
@@ -65,10 +66,10 @@
             <q-card-section>
               <div class="text-h6">Hoạt động gần đây</div>
             </q-card-section>
-            <q-separator/>
+            <q-separator />
             <q-card-section>
               <div class="row">
-                <ActivityHistoryComponent :activities="lastActivities"/>
+                <ActivityHistoryComponent :activities="lastActivities" />
               </div>
             </q-card-section>
             <q-card-section class="q-pa-none">
@@ -89,204 +90,207 @@
 </template>
 
 <script>
-
-import { useActivityStore } from 'stores/activity-store'
-import { onMounted, ref } from 'vue'
-import ActivityHistoryComponent from 'components/ActivityHistoryComponent.vue'
-import { useRoute } from 'vue-router'
-import { useProjectStore } from 'stores/project-store'
-import { useAppStore } from 'stores/app-store'
-import { useQuasar } from 'quasar'
+import { useActivityStore } from "stores/activity-store";
+import { onMounted, ref } from "vue";
+import ActivityHistoryComponent from "components/ActivityHistoryComponent.vue";
+import { useRoute } from "vue-router";
+import { useProjectStore } from "stores/project-store";
+import { useAppStore } from "stores/app-store";
+import { useQuasar } from "quasar";
 
 export default {
-  name: 'AppOverViewPage',
+  name: "AppOverViewPage",
   components: { ActivityHistoryComponent },
-  setup () {
-    const $q = useQuasar()
-    const route = useRoute()
-    const projectStore = useProjectStore()
-    const appStore = useAppStore()
-    const activityStore = useActivityStore()
-    const lastActivities = ref([])
-    const appId = ref(route.params.appId)
-    const app = ref({})
-    const appFields = ref([])
-    const imageFields = ref([])
-    const loading = ref(false)
-    const replicas = ref(app.value?.replicas || 1)
+  setup() {
+    const $q = useQuasar();
+    const route = useRoute();
+    const projectStore = useProjectStore();
+    const appStore = useAppStore();
+    const activityStore = useActivityStore();
+    const lastActivities = ref([]);
+    const appId = ref(route.params.appId);
+    const app = ref({});
+    const appFields = ref([]);
+    const imageFields = ref([]);
+    const loading = ref(false);
+    const replicas = ref(app.value?.replicas || 1);
 
     onMounted(() => {
       projectStore.fetchProjects(() => {
-        loadData()
-      })
-    })
+        loadData();
+      });
+    });
     const loadData = () => {
-      loading.value = true
-      activityStore.fetchActivities(projectStore.activeProject?.id, appId.value, () => {
-        lastActivities.value = activityStore.latestActivities
-      })
+      loading.value = true;
+      activityStore.fetchActivities(
+        projectStore.activeProject?.id,
+        appId.value,
+        () => {
+          lastActivities.value = activityStore.latestActivities;
+        }
+      );
       appStore.getApp(projectStore.activeProject?.id, appId.value, (data) => {
-        app.value = data
-        replicas.value = app.value?.replicas || 1
+        app.value = data;
+        replicas.value = app.value?.replicas || 1;
         appFields.value = [
           {
-            name: 'name',
-            label: 'Tên ứng dụng',
-            value: app.value.name
+            name: "name",
+            label: "Tên ứng dụng",
+            value: app.value.name,
           },
           {
-            name: 'platform',
-            label: 'Nền tảng',
-            value: app.value.platform
+            name: "platform",
+            label: "Nền tảng",
+            value: app.value.platform,
           },
           {
-            name: 'address',
-            label: 'Địa chỉ',
-            value: app.value.address
+            name: "address",
+            label: "Địa chỉ (lưu ý: Cần triển khai xong mới truy cập được)",
+            value: app.value.address,
           },
           {
-            name: 'status',
-            label: 'Trạng thái',
-            value: app.value.status
+            name: "status",
+            label: "Trạng thái",
+            value: app.value.status,
           },
           {
-            name: 'created_at',
-            label: 'Ngày tạo',
-            value: app.value.created_at
+            name: "created_at",
+            label: "Ngày tạo",
+            value: app.value.created_at,
           },
           {
-            name: 'cpu',
-            label: 'CPU',
-            value: (app.value.cpu / 1000) + ' vCPU'
+            name: "cpu",
+            label: "CPU",
+            value: app.value.cpu / 1000 + " vCPU",
           },
           {
-            name: 'cpu',
-            label: 'RAM',
-            value: app.value.memory + 'MB'
+            name: "cpu",
+            label: "RAM",
+            value: app.value.memory + "MB",
           },
           {
-            name: 'replicas',
-            label: 'Số lượng',
-            value: app.value.replicas
-          }
-        ]
+            name: "replicas",
+            label: "Số lượng",
+            value: app.value.replicas,
+          },
+        ];
         imageFields.value = [
           {
-            name: 'registry',
-            label: 'Registry',
-            value: app.value.image?.registry
+            name: "registry",
+            label: "Registry",
+            value: app.value.image?.registry,
           },
           {
-            name: 'repository',
-            label: 'Repository',
-            value: app.value.image?.repository
+            name: "repository",
+            label: "Repository",
+            value: app.value.image?.repository,
           },
           {
-            name: 'tag',
-            label: 'Tag',
-            value: app.value.image?.tag
+            name: "tag",
+            label: "Tag",
+            value: app.value.image?.tag,
           },
           {
-            name: 'digest',
-            label: 'Digest',
-            value: app.value.image?.digest
-          }
-        ]
-        loading.value = false
-      })
-    }
+            name: "digest",
+            label: "Digest",
+            value: app.value.image?.digest,
+          },
+        ];
+        loading.value = false;
+      });
+    };
 
     const onScale = () => {
       $q.dialog({
-        title: 'Cài đặt số lượng ứng dụng',
-        message: 'Số lượng ứng dụng',
+        title: "Cài đặt số lượng ứng dụng",
+        message: "Số lượng ứng dụng",
         prompt: {
           model: replicas.value,
-          type: 'number',
+          type: "number",
           min: 1,
-          max: 100
+          max: 100,
         },
         cancel: true,
-        persistent: true
+        persistent: true,
       }).onOk((data) => {
         if (data < 1) {
           $q.notify({
-            message: 'Số lượng ứng dụng phải lớn hơn 0',
-            color: 'negative',
-            position: 'top',
+            message: "Số lượng ứng dụng phải lớn hơn 0",
+            color: "negative",
+            position: "top",
             timeout: 2000,
-            icon: 'warning'
-          })
-          return
+            icon: "warning",
+          });
+          return;
         }
         appStore.scaleApp(appId.value, data, (err, response) => {
           if (err) {
             $q.notify({
-              message: 'Không thể cài đặt số lượng ứng dụng',
-              color: 'negative',
-              position: 'top',
+              message: "Không thể cài đặt số lượng ứng dụng",
+              color: "negative",
+              position: "top",
               timeout: 2000,
-              icon: 'warning'
-            })
+              icon: "warning",
+            });
           } else {
             $q.notify({
-              message: 'Đã cài đặt số lượng ứng dụng',
-              color: 'positive',
-              position: 'top',
+              message: "Đã cài đặt số lượng ứng dụng",
+              color: "positive",
+              position: "top",
               timeout: 2000,
-              icon: 'check'
-            })
-            loadData()
+              icon: "check",
+            });
+            loadData();
           }
-        })
-      })
-    }
+        });
+      });
+    };
 
     const onRestart = () => {
       appStore.restartApp(appId.value, (err, response) => {
         if (err) {
           $q.notify({
-            message: 'Không thể khởi động lại ứng dụng',
-            color: 'negative',
-            position: 'top',
+            message: "Không thể khởi động lại ứng dụng",
+            color: "negative",
+            position: "top",
             timeout: 2000,
-            icon: 'warning'
-          })
+            icon: "warning",
+          });
         } else {
           $q.notify({
-            message: 'Đã khởi động lại ứng dụng',
-            color: 'positive',
-            position: 'top',
+            message: "Đã khởi động lại ứng dụng",
+            color: "positive",
+            position: "top",
             timeout: 2000,
-            icon: 'check'
-          })
-          loadData()
+            icon: "check",
+          });
+          loadData();
         }
-      })
-    }
+      });
+    };
 
     const onPowerOff = () => {
       appStore.stopApp(appId.value, (err, response) => {
         if (err) {
           $q.notify({
-            message: 'Không thể tắt ứng dụng',
-            color: 'negative',
-            position: 'top',
+            message: "Không thể tắt ứng dụng",
+            color: "negative",
+            position: "top",
             timeout: 2000,
-            icon: 'warning'
-          })
+            icon: "warning",
+          });
         } else {
           $q.notify({
-            message: 'Đã tắt ứng dụng',
-            color: 'positive',
-            position: 'top',
+            message: "Đã tắt ứng dụng",
+            color: "positive",
+            position: "top",
             timeout: 2000,
-            icon: 'check'
-          })
-          loadData()
+            icon: "check",
+          });
+          loadData();
         }
-      })
-    }
+      });
+    };
 
     return {
       lastActivities,
@@ -297,8 +301,8 @@ export default {
 
       onScale,
       onRestart,
-      onPowerOff
-    }
-  }
-}
+      onPowerOff,
+    };
+  },
+};
 </script>

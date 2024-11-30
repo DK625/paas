@@ -76,8 +76,8 @@ export default {
       },
       {
         name: 'project.apps.settings',
-        label: 'Cài đặt',
-        icon: 'o_settings',
+        label: 'Xoá ứng dụng',
+        icon: 'o_delete_forever',
         to: { name: 'project.apps.settings' }
       }
     ]

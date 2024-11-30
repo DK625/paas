@@ -1,7 +1,7 @@
 helm repo add tsuru https://tsuru.github.io/charts
 helm repo update
 helm install tsuru ./charts/tsuru-stack --create-namespace --namespace tsuru-system 
-kubectl exec -it -n tsuru-system deploy/tsuru-api -- tsurud root user create admin@ipaas.site
+kubectl exec -it -n tsuru-system deploy/tsuru-api -- tsurud root user create admin@admin.com
 export TSURU_HOST=$(kubectl get svc -n tsuru-system tsuru-api -o 'jsonpath={.status.loadBalancer.ingress[].ip}')
 tsuru target-add bke http://$TSURU_HOST -s
 tsuru login

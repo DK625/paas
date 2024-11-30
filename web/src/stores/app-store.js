@@ -11,21 +11,21 @@ export const useAppStore = defineStore('appStore', {
   }),
 
   getters: {
-    listApps (state) {
+    listApps(state) {
       if (!state.apps) return null
       return state.apps
     },
-    getSelectedApp (state) {
+    getSelectedApp(state) {
       if (!state.selectedApp) return null
       return state.selectedApp
     },
-    numberOfPages (state) {
+    numberOfPages(state) {
       return Math.ceil(state.totalApps / state.pageSize)
     }
   },
 
   actions: {
-    fetchApps (projectId, page, searchText, callback) {
+    fetchApps(projectId, page, searchText, callback) {
       auth0.getAccessTokenSilently().then(
         token => {
           const headers = {
@@ -58,7 +58,7 @@ export const useAppStore = defineStore('appStore', {
         }
       )
     },
-    getApp (projectId, appId, callback) {
+    getApp(projectId, appId, callback) {
       auth0.getAccessTokenSilently().then((token) => {
         const headers = {
           Authorization: 'Bearer ' + token
@@ -82,7 +82,7 @@ export const useAppStore = defineStore('appStore', {
                   cpu: scale.unit?.cpu,
                   memory: scale.unit?.memory,
                   replicas: scale.replicas,
-                  address: 'https://' + app.name + '.ipaas.site'
+                  address: 'https://' + app.name + '.engine.pro.vn'
                 }
                 this.selectedApp = data
                 callback(data)
@@ -92,7 +92,7 @@ export const useAppStore = defineStore('appStore', {
       }
       )
     },
-    deployApp (projectId, appId, params, callback) {
+    deployApp(projectId, appId, params, callback) {
       auth0.getAccessTokenSilently().then((token) => {
         params = {
           ...params,
@@ -112,7 +112,7 @@ export const useAppStore = defineStore('appStore', {
         )
       })
     },
-    deleteApp (appId, callback) {
+    deleteApp(appId, callback) {
       auth0.getAccessTokenSilently().then((token) => {
         const url = '/apps/' + appId
         const headers = {
@@ -129,7 +129,7 @@ export const useAppStore = defineStore('appStore', {
         )
       })
     },
-    stopApp (appId, callback) {
+    stopApp(appId, callback) {
       auth0.getAccessTokenSilently().then((token) => {
         const url = '/apps/' + appId + '/stop'
         const headers = {
@@ -145,7 +145,7 @@ export const useAppStore = defineStore('appStore', {
           })
       })
     },
-    restartApp (appId, callback) {
+    restartApp(appId, callback) {
       auth0.getAccessTokenSilently().then((token) => {
         const url = '/apps/' + appId + '/restart'
         const headers = {
@@ -161,7 +161,7 @@ export const useAppStore = defineStore('appStore', {
           })
       })
     },
-    scaleApp (appId, replicas, callback) {
+    scaleApp(appId, replicas, callback) {
       auth0.getAccessTokenSilently().then((token) => {
         const url = '/apps/' + appId + '/scale'
         const headers = {
