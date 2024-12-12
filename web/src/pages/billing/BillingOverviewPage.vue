@@ -5,19 +5,23 @@
         <div class="row">
           <q-card class="my-card fit">
             <q-card-section>
-              <div class="text-h6">Chi phí sử dụng</div>
+              <div class="text-h6">Tài Khoản</div>
             </q-card-section>
             <q-separator/>
             <q-card-section>
               <div class="row">
                 <div class="col-xs-12 col-md-6">
+                  <div class="text-caption"><b>Số dư:</b> {{ balance.toLocaleString() }} VND</div>
                   <div class="text-weight-bolder">Chi phí đã sử dụng</div>
-                  <div class="text-caption text-italic">(Từ 1/1 - 9/1/2023)</div>
-                  <div class="text-caption text-weight-medium">0.00 VND</div>
+                  <div class="text-caption text-weight-medium">{{ costUsed.toLocaleString() }} VND</div>
                 </div>
                 <div class="col-xs-12 col-md-6">
                   <div class="text-weight-bolder">Chi phí ước tính tới cuối tháng</div>
-                  <div class="text-caption text-weight-medium">0.00 VND</div>
+                  <div class="text-caption text-weight-medium">{{ estimatedCost.toLocaleString() }} VND</div>
+                </div>
+                <div class="col-xs-12 col-md-6">
+                  <div class="text-weight-bolder">Thời gian ước tính</div>
+                  <div class="text-caption text-weight-medium">{{ formatDate(estimatedTime) }}</div>
                 </div>
               </div>
             </q-card-section>
@@ -27,47 +31,36 @@
                 flat
                 align="left"
                 class="fit text-left text-weight-light"
-                label="Chi tiết chi phí"
+                label="Nạp tiền"
                 icon="arrow_forward"
-                :to="{ name: 'project.billing.invoices' }"
+                :to="{ name: 'project.billing.deposit', hash: '#deposit-box' }"
               />
             </q-card-section>
           </q-card>
         </div>
         <div class="row q-py-md">
           <q-card class="my-card fit">
-            <q-card-section>
-              <div class="text-h6">Giao dịch gần đây</div>
-            </q-card-section>
-            <q-separator/>
-            <q-card-section class="q-pa-xs">
-              <div class="row">
-                <div class="col-xs-12">
-                  <q-table
-                    flat
-                    :rows="rows"
-                    :columns="columns"
-                    row-key="payment_id"
-                    hide-pagination
-                  />
-                </div>
+          <q-card-section>
+            <div class="text-h6">Danh sách hóa đơn</div>
+          </q-card-section>
+          <q-separator/>
+          <q-card-section class="q-pa-xs">
+            <div class="row">
+              <div class="col-xs-12">
+                <q-table
+                  flat
+                  :rows="invoiceRows"
+                  :columns="invoiceColumns"
+                  row-key="invoice_id"
+                />
               </div>
-            </q-card-section>
-            <q-separator/>
-            <q-card-section class="q-pa-none">
-              <q-btn
-                flat
-                align="left"
-                class="fit text-left text-weight-light"
-                label="Toàn bộ giao dịch"
-                icon="arrow_forward"
-                :to="{ name: 'project.billing.transactions' }"
-              />
-            </q-card-section>
-          </q-card>
+            </div>
+          </q-card-section>
+          <q-separator/>
+        </q-card>
         </div>
       </div>
-      <div class="col-xs-12 col-md-3 q-pl-md">
+      <!-- <div class="col-xs-12 col-md-3 q-pl-md">
         <div class="row">
           <q-card class="my-card fit">
             <q-card-section>
@@ -75,7 +68,7 @@
             </q-card-section>
             <q-separator/>
             <q-card-section>
-              <div class="text-caption"><b>Số dư:</b> {{ account.balance.toLocaleString() }} VND</div>
+              <div class="text-caption"><b>Số dư:</b> {{ balance.toLocaleString() }} VND</div>
               <span class="text-caption"><b>Chi phí chưa thanh toán:</b> {{
                   account.unpaid_amount.toLocaleString()
                 }} VND</span>
@@ -97,41 +90,7 @@
             </q-card-section>
           </q-card>
         </div>
-
-        <div class="row q-py-md">
-          <q-card class="my-card fit">
-            <q-card-section>
-              <div class="text-h6">Hóa đơn gần đây</div>
-            </q-card-section>
-            <q-separator/>
-            <q-card-section>
-              <span v-if="!invoices">Bạn chưa có hóa đơn</span>
-              <q-list v-else class="q-pa-none">
-                <q-item v-for="invoice in invoices" :key="invoice.id" clickable :to="invoice.url">
-                  <q-item-section>
-                    <q-item-label>{{ invoice.name }}</q-item-label>
-                    <q-item-label caption>{{ invoice.date }}</q-item-label>
-                  </q-item-section>
-                  <q-item-section side>
-                    <q-item-label>{{ invoice.amount.toLocaleString() }} VND</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-card-section>
-            <q-separator/>
-            <q-card-section class="q-pa-none">
-              <q-btn
-                flat
-                align="left"
-                class="fit text-left text-weight-light"
-                label="Toàn bộ hóa đơn"
-                icon="arrow_forward"
-                :to="{ name: 'project.billing.invoices', hash: '#invoices-box' }"
-              />
-            </q-card-section>
-          </q-card>
-        </div>
-      </div>
+      </div> -->
     </div>
   </q-page>
 </template>
@@ -150,12 +109,19 @@
 </style>
 
 <script>
-import { ref } from 'vue'
+import { computed, onMounted, ref, toRaw } from 'vue'
 import { date } from 'quasar'
+import { usePaymentStore } from 'src/stores/payment-store'
 
 export default {
   // name: 'PageName',
   setup () {
+    const paymentStore = usePaymentStore()
+    const balance = ref(0)
+    const costUsed = ref(0)
+    const estimatedCost = ref(0)
+    const estimatedTime = ref(new Date())
+    const bills = ref([])
     const formatDate = (strDate) => {
       const timeStamp = Date(strDate)
       return date.formatDate(timeStamp, 'HH:mm:ss DD/MM/YYYY Z')
@@ -181,6 +147,52 @@ export default {
         sortable: true
       },
       { name: 'payment_status', align: 'left', label: 'Trạng thái', field: 'payment_status' }
+    ]
+
+    const invoiceColumns = [
+      {
+        name: 'code',
+        required: true,
+        label: 'Mã thanh toán',
+        align: 'left',
+        sortable: true,
+        field: "code"
+      },
+      { name: 'start', align: 'left', label: 'Ngày bắt đầu', field: (row)=>{
+        return formatDate(row.start)
+      } },
+      { name: 'end', align: 'left', label: 'Ngày kết thúc', field: (row)=>{
+        return formatDate(row.end)
+      } },{
+        name: 'amount',
+        required: true,
+        label: 'Số tiền',
+        align: 'left',
+        sortable: true,
+        field: (row)=>{
+          return Number(row.amount).toLocaleString() + ' VND'
+
+        }
+      },
+      {
+        name: 'description',
+        required: true,
+        label: 'Thông tin thanh toán',
+        align: 'left',
+        sortable: true,
+        field: "description"
+      },
+      {
+        name: 'createdAt',
+        required: true,
+        label: 'Ngày thanh toán',
+        align: 'left',
+        sortable: true,
+        field: (row)=>{
+          return formatDate(row.createdAt)
+        }
+      }
+     
     ]
 
     const rows = [
@@ -270,11 +282,38 @@ export default {
         url: '#'
       }
     ])
+    
+    onMounted(() => {
+      try {
+        paymentStore.fetchBalance(() => {
+          balance.value = paymentStore.balance;
+          costUsed.value = paymentStore.costUsed;
+          estimatedCost.value = paymentStore.estimatedCost;
+          estimatedTime.value = paymentStore.estimatedTime;
+        });
+        paymentStore.fetchBill(()=>{
+          bills.value =toRaw( paymentStore.bills)      
+        })
+      } catch (error) {
+        console.error('Error fetching balance or projects:', error);
+      }
+    });
+
+    const invoiceRows = computed(() => {
+      return toRaw(bills.value)
+    });
+
     return {
+      balance,
+      costUsed,
+      estimatedCost,
+      estimatedTime,
       tooltipContent,
       account,
       rows,
       columns,
+      invoiceColumns,
+      invoiceRows,
       invoices: invoices.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)),
       formatDate
     }

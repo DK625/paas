@@ -211,7 +211,7 @@
 
 <script>
 import { ref } from "vue";
-import { api } from "boot/axios";
+import { api, apiPayment } from "boot/axios";
 import { useProjectStore } from "stores/project-store";
 import { useRouter } from "vue-router";
 import { useAuth0 } from "@auth0/auth0-vue";
@@ -239,6 +239,9 @@ export default {
       selectedUnit.value = u;
       step.value = 3;
     };
+
+    console.log("unit",selectUnit.value);
+    
 
     const requestConfirm = () => {
       nameRef.value.validate();
@@ -276,6 +279,37 @@ export default {
               color: "positive",
               position: "top",
             });
+
+            apiPayment
+            .post(
+              "/payment/create-app",
+              {
+                appId:res.data.id,
+                name:res.data.name,
+                priceInHouse:units.find(item => item.id === selectedUnit.value.id)?.price,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            )
+            .then((res) => {
+              loading.value = false;
+              $q.notify({
+                message: "Tạo ứng dụng thành công",
+                color: "positive",
+                position: "top",
+              });
+              router.push({
+                name: "project.apps.overview",
+                params: { appId: name.value },
+              });
+            })
+
+            
+
+
             router.push({
               name: "project.apps.overview",
               params: { appId: name.value },
@@ -291,7 +325,7 @@ export default {
               position: "top",
             });
           });
-      });
+        });
     };
     const units = [
       {

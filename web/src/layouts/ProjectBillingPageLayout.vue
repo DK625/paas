@@ -64,7 +64,7 @@ export default {
       },
       {
         name: 'project.billing.transactions',
-        label: 'Giao dịch',
+        label: 'Biến động số dư',
         icon: 'o_payments',
         to: { name: 'project.billing.transactions' }
       }
