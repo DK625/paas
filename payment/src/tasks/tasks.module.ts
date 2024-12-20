@@ -10,6 +10,8 @@ import { TransactionRepositories } from 'src/schema/repositories/transaction.rep
 import { PaymentInfoRepositories } from 'src/schema/repositories/paymentInfo.repositories';
 import { BalanceRepositories } from 'src/schema/repositories/balance.repositories';
 import { PaymentService } from 'src/payment/payment.service';
+import { BillRepositories } from 'src/schema/repositories/bill.repositories';
+import { Bill, BillSchema } from 'src/schema/bill.schema';
 
 @Module({
   imports: [
@@ -21,12 +23,14 @@ import { PaymentService } from 'src/payment/payment.service';
       { name: Transaction.name, schema: TransactionSchema },
     ]),
     MongooseModule.forFeature([{ name: App.name, schema: AppSchema }]),
+    MongooseModule.forFeature([{ name: Bill.name, schema: BillSchema }]),
   ],
   providers: [
     PaymentService,
     BalanceRepositories,
     PaymentInfoRepositories,
     TransactionRepositories,
+    BillRepositories,
     AppRepositories,
     TasksService,
   ],

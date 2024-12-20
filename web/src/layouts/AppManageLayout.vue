@@ -51,11 +51,11 @@ export default {
       link.value = newVal
     })
     const currentUser = ref(auth0.user)
-    
+
       const { activeProject } = storeToRefs(projectStore)
     const { listMembers, numberOfPages } = storeToRefs(memberStore)
-    
-    const items = [
+
+    const items = ref([
       {
         name: 'project.apps.overview',
         label: 'Thông tin chung',
@@ -74,10 +74,10 @@ export default {
         icon: 'o_manage_search',
         to: { name: 'project.apps.logs' }
       }
-    ]
+    ])
 
-    if(listMembers.value[0] && listMembers.value[0].role === 'owner'){
-      items.push(...[
+    if(listMembers.value[0] && listMembers.value[0]?.role === 'owner'){
+      items.value.push(...[
       {
         name: 'project.apps.env',
         label: 'Biến môi trường',

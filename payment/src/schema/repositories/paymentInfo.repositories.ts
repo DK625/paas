@@ -38,7 +38,9 @@ export class PaymentInfoRepositories {
     return false;
   }
   async GetPaymentInfo(userId: string): Promise<PaymentInfo[]> {
-    const paymentInfos = await this.paymentInfoModel.find({ userId }).exec();
+    const paymentInfos = await this.paymentInfoModel
+      .find({ userId }, {}, { sort: { createdAt: -1 } })
+      .exec();
 
     return paymentInfos;
   }

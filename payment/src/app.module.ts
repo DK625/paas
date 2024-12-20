@@ -10,7 +10,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthMiddleware } from './auth.middleware';
 import { TasksModule } from './tasks/tasks.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -26,7 +25,7 @@ import { TasksModule } from './tasks/tasks.module';
     }),
     PaymentModule,
     TasksModule,
-    ScheduleModule.forRoot(), TasksModule
+    ScheduleModule.forRoot(),
   ],
 })
 export class AppModule implements NestModule {
