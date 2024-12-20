@@ -32,18 +32,30 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { useMemberStore } from 'stores/members-store'
+import { useAuth0 } from '@auth0/auth0-vue'
+import { useProjectStore } from 'src/stores/project-store'
 
 export default {
   // name: 'PageName',
   setup () {
+    const auth0 = useAuth0()
     const route = useRoute()
+    const projectStore = useProjectStore()
+    const memberStore = useMemberStore()
     const link = ref(route.name)
     watch(() => route.name, (newVal) => {
       link.value = newVal
     })
-    const items = [
+    const currentUser = ref(auth0.user)
+    
+      const { activeProject } = storeToRefs(projectStore)
+    const { listMembers, numberOfPages } = storeToRefs(memberStore)
+    
+    const items = ref([
       {
         name: 'project.apps.overview',
         label: 'Thông tin chung',
@@ -61,7 +73,11 @@ export default {
         label: 'Logs',
         icon: 'o_manage_search',
         to: { name: 'project.apps.logs' }
-      },
+      }
+    ])
+
+    if(listMembers.value[0] && listMembers.value[0]?.role === 'owner'){
+      items.value.push(...[
       {
         name: 'project.apps.env',
         label: 'Biến môi trường',
@@ -76,12 +92,20 @@ export default {
       },
       {
         name: 'project.apps.settings',
-        label: 'Xoá ứng dụng',
-        icon: 'o_delete_forever',
+        label: 'Cài đặt',
+        icon: 'o_settings',
         to: { name: 'project.apps.settings' }
-      }
-    ]
+      }])
+    }
     const openDrawer = ref(true)
+
+    onMounted(() => {
+      return reloadMembers()
+    })
+
+    const reloadMembers = () => {
+      memberStore.fetchMembers(activeProject.value.id, 1, currentUser.value.name, () => {})
+    }
     return {
       openDrawer,
       items,

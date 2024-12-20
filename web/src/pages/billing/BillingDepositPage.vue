@@ -50,9 +50,10 @@
               <div class="col-xs-12">
                 <q-table
                   flat
-                  :rows="rows"
+                  :rows="tableRows"
                   :columns="columns"
-                  row-key="payment_id"
+                  row-key="_id"
+                  @row-click="onRowClick"
                 />
               </div>
             </div>
@@ -78,78 +79,85 @@
 </style>
 
 <script>
-import { ref } from 'vue'
+import { computed, onMounted, ref, toRaw } from 'vue'
 import { date, useQuasar } from 'quasar'
 import TopUpComponent from 'components/TopUpComponent.vue'
+import { usePaymentStore } from 'src/stores/payment-store'
 
 export default {
   // name: 'PageName',
   setup () {
     const $q = useQuasar()
+    const paymentStore = usePaymentStore()
+    const paymentInfo = ref([])
     const formatDate = (strDate) => {
-      const timeStamp = Date(strDate)
-      return date.formatDate(timeStamp, 'HH:mm:ss DD/MM/YYYY Z')
+      const timeStamp = new Date(strDate)      
+      return date.formatDate(timeStamp, 'HH:mm DD-MM-YYYY')
     }
     const columns = [
-      {
-        name: 'created_at',
-        required: true,
-        label: 'Ngày Tạo',
-        align: 'left',
-        sortable: true,
-        field: row => formatDate(row.created_at)
-      },
-      { name: 'payment_id', align: 'left', label: 'Mã biên lai', field: 'payment_id' },
-      { name: 'payment_method', align: 'left', label: 'Phương thức nạp tiền', field: 'payment_method' },
-      {
-        name: 'payment_amount',
-        align: 'left',
-        label: 'Số tiền',
-        field: (row) => {
-          return Number(row.payment_amount).toLocaleString() + ' VND'
-        },
-        sortable: true
-      },
-      { name: 'payment_status', align: 'left', label: 'Trạng thái', field: 'payment_status' }
-    ]
-
-    const rows = [
-      {
-        created_at: '2022-12-12T12:00:00Z',
-        payment_id: 'PM-01',
-        payment_method: 'Chuyển Khoản',
-        payment_amount: 10000,
-        payment_status: 'Thành công'
-      },
-      {
-        created_at: '2022-12-12T12:00:00Z',
-        payment_id: 'PM-02',
-        payment_method: 'Chuyển Khoản',
-        payment_amount: 20000,
-        payment_status: 'Thành công'
-      },
-      {
-        created_at: '2022-12-12T12:00:00Z',
-        payment_id: 'PM-03',
-        payment_method: 'MoMo',
-        payment_amount: 25000,
-        payment_status: 'Thất bại'
-      },
-      {
-        created_at: '2022-12-10T12:00:00Z',
-        payment_id: 'PM-04',
-        payment_method: 'MoMo',
-        payment_amount: 25000,
-        payment_status: 'Thất bại'
-      },
-      {
-        created_at: '2022-12-11T12:00:00Z',
-        payment_id: 'PM-05',
-        payment_method: 'MoMo',
-        payment_amount: 25000,
-        payment_status: 'Thành công'
+  {
+    name: 'description',
+    required: true,
+    label: 'Mã thanh toán',
+    align: 'left',
+    sortable: true,
+    field: 'description'
+  },
+  {
+    name: 'createdAt',
+    required: true,
+    label: 'Ngày Tạo',
+    align: 'left',
+    sortable: true,
+    field: row => formatDate(row.createdAt)
+  },
+  {
+    name: 'exceptedAt',
+    required: true,
+    label: 'Hết hạn thanh toán',
+    align: 'left',
+    sortable: true,
+    field: row => formatDate(row.exceptedAt)
+  },
+  {
+    name: 'amount',
+    align: 'left',
+    label: 'Số tiền',
+    field: (row) => {
+      return Number(row.amount).toLocaleString() + ' VND'
+    },
+    sortable: true
+  },
+  {
+    name: 'status',
+    align: 'left',
+    label: 'Trạng thái',
+    field: (row) => {
+      if (row.exceptedAt < new Date() && row.status === 'pending') {
+        return "Đã hết hạn";
       }
-    ]
+
+      let result;
+      switch (row.status) {
+        case 'success':
+          result = "Thanh toán thành công";
+          break;
+        case 'cancel':
+          result = 'Đã hủy';
+          break;
+        case 'pending':
+          result = "Đang đợi thanh toán";
+          break;
+        default:
+          result = "Không khả dụng";
+      }
+
+      return result;
+    }
+  }
+];
+
+
     const predefinedDepositOptions = [
       {
         amount: 50000
@@ -171,23 +179,40 @@ export default {
       }
     ]
     const depositAmount = ref(null)
+
+    onMounted(() => {
+      try {
+        paymentStore.fetchUrlPayment(()=>{
+          paymentInfo.value =toRaw( paymentStore.paymentInfo)      
+        })
+      } catch (error) {
+        console.error('Error fetching balance or projects:', error);
+      }
+    })
+
     const requestTopUp = (depositAmount) => {
-      $q.dialog({
-        component: TopUpComponent,
-        componentProps: {
-          depositAmount
-        },
-        persistent: true
-      })
+      paymentStore.payment(depositAmount)
+      
     }
+
+    const tableRows = computed(() => toRaw(paymentInfo.value));
+
+    const onRowClick = (_, row) => {      
+      
+      if (row.paymentUrl && row.exceptedAt>row.createdAt && row.status ==='pending') {
+        window.location.href = row.paymentUrl;
+      }
+    };
 
     const customDeposit = ref(0)
     return {
-      rows,
+      tableRows,
       columns,
       customDeposit,
       predefinedDepositOptions,
+      paymentInfo,
       depositAmount,
+      onRowClick,
       requestTopUp
     }
   }
