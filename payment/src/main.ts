@@ -11,9 +11,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api'); // Optional: Set global prefix
   app.useGlobalInterceptors(new ResponseInterceptor());
 
-  await app.listen(3001, () => {
-    console.log('Server running on http://localhost:3001');
-  });
+  await app.listen(3001);
 }
 
 bootstrap();

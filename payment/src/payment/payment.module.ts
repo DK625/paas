@@ -10,6 +10,9 @@ import { PaymentInfoRepositories } from 'src/schema/repositories/paymentInfo.rep
 import { TransactionRepositories } from 'src/schema/repositories/transaction.repositories';
 import { AppRepositories } from 'src/schema/repositories/app.repositories';
 import { App, AppSchema } from 'src/schema/app.schema';
+import { TasksService } from 'src/tasks/tasks.service';
+import { BillRepositories } from 'src/schema/repositories/bill.repositories';
+import { Bill, BillSchema } from 'src/schema/bill.schema';
 
 @Module({
   imports: [
@@ -21,6 +24,7 @@ import { App, AppSchema } from 'src/schema/app.schema';
       { name: Transaction.name, schema: TransactionSchema },
     ]),
     MongooseModule.forFeature([{ name: App.name, schema: AppSchema }]),
+    MongooseModule.forFeature([{ name: Bill.name, schema: BillSchema }]),
   ],
   controllers: [PaymentController],
   providers: [
@@ -28,7 +32,9 @@ import { App, AppSchema } from 'src/schema/app.schema';
     BalanceRepositories,
     PaymentInfoRepositories,
     TransactionRepositories,
+    BillRepositories,
     AppRepositories,
+    TasksService,
   ],
 })
 export class PaymentModule {}

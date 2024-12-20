@@ -66,14 +66,12 @@ export class PaymentService {
         orderCode: this.generateRandomNumber(),
         amount: dto.amount,
         description: this.generateUniqueId(),
-        cancelUrl: `${fullUrl}/api/payment/payment-cancel`,
+        cancelUrl: this.urlReturn,
         returnUrl: `${fullUrl}/api/payment/payment-success`,
       };
 
-      console.log(paymentData);
-
       paymentData['signature'] = this.calculateSignature(paymentData);
-      paymentData['expiredAt'] = Math.floor(Date.now() / 1000) + 3600;
+      paymentData['expiredAt'] = Math.floor(Date.now() / 1000) + 3600000;
 
       const response = await axios.post(
         `${this.apiUrl}/v2/payment-requests`,

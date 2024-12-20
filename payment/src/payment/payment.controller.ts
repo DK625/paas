@@ -7,6 +7,7 @@ import { PaymentInfoRepositories } from 'src/schema/repositories/paymentInfo.rep
 import { TransactionRepositories } from 'src/schema/repositories/transaction.repositories';
 import { App } from 'src/schema/app.schema';
 import { TasksService } from 'src/tasks/tasks.service';
+import { BillRepositories } from 'src/schema/repositories/bill.repositories';
 
 @Controller('payment')
 export class PaymentController {
@@ -15,6 +16,7 @@ export class PaymentController {
     private readonly balanceRepositories: BalanceRepositories,
     private readonly paymentInfoRepositories: PaymentInfoRepositories,
     private readonly transactionRepositories: TransactionRepositories,
+    private readonly billRepositories: BillRepositories,
     private readonly task: TasksService,
   ) {}
 
@@ -44,27 +46,15 @@ export class PaymentController {
   @Get('balance')
   async getBalance(@Req() req: Request) {
     const { id } = req.user;
-    await this.task.updateBalance(id)
+    await this.task.updateBalance(id);
     return this.balanceRepositories.getBalance(id);
   }
 
   @Get('bills')
   async getBills(@Req() req: Request) {
     const { id } = req.user;
-    console.log(id);
 
-    return [
-      {
-        id: 'hadsidhaihdasidh',
-        code: 'DBDAS',
-        start: new Date(),
-        end: new Date(),
-        timeOfUse: 300,
-        amount: 1000000,
-        description: 'Payment for subscription',
-        createdAt: new Date(),
-      },
-    ];
+    return await this.billRepositories.getBill(id);
   }
   @Get('transaction')
   async getTransactions(@Req() req: Request) {
@@ -88,7 +78,6 @@ export class PaymentController {
       isRunning: false,
       priceInHouse,
     });
-    console.log('Res', res);
 
     return res;
   }
