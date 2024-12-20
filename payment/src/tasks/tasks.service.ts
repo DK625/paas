@@ -90,13 +90,21 @@ export class TasksService {
 
     await this.billRepo.createBill({
       userId: balance.userId,
-      code: 'đạ',
+      code: this.generateUniqueId(),
       start: firstDayLastMonth,
       end: lastDayLastMonth,
       timeOfUse: 720,
       amount: balance.costUsed,
       description: `Thanh toán hóa đơn tháng ${time.getMonth()}`,
     });
+  }
+
+  private generateUniqueId(length = 6): string {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    return Array.from(
+      { length },
+      () => chars[Math.floor(Math.random() * chars.length)],
+    ).join('');
   }
 
   getHoursUntilEndOfMonth() {
