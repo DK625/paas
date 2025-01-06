@@ -304,3 +304,30 @@ async def stop_app(
     except ValueError as e:
         raise HTTPException(status_code=400, detail={"error": str(e)})
     return app
+
+
+
+@router.post("/{app_name}/stop_by_cronjob")
+async def stop_app(
+        app_name: str,
+        uow: UnitOfWork = Depends(unit_of_work),
+        deploy_client=Depends(get_deploy_client),
+        # user=Depends(current_user)
+):
+    try:
+        async with uow:
+            app = await uow.apps.get_by_id(app_name)
+            if not app:
+                raise HTTPException(status_code=404, detail={"error": "App not found"})
+            project = await uow.projects.get_by_id(app.project_id)
+            if not project:
+                raise HTTPException(status_code=404, detail={"error": "App not found"})
+            # if project.is_member(user.id) is False:
+            #     raise HTTPException(status_code=403, detail={"error": "Permission denied"})
+            app.stop()
+            await uow.apps.add(app)
+            await uow.commit()
+            await deploy_client.stop_app(app_name)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail={"error": str(e)})
+    return app
