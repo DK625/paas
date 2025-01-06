@@ -2,16 +2,16 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    deployment.kubernetes.io/revision: "9"
-  creationTimestamp: "2024-11-30T01:34:14Z"
-  generation: 9
+    deployment.kubernetes.io/revision: "1"
+  creationTimestamp: "2025-01-02T02:39:39Z"
+  generation: 1
   labels:
-    app: app-web
+    app: education-web
     app.kubernetes.io/component: tsuru-app
-    app.kubernetes.io/instance: app-web
+    app.kubernetes.io/instance: education-web
     app.kubernetes.io/managed-by: tsuru
-    app.kubernetes.io/name: app
-    tsuru.io/app-name: app
+    app.kubernetes.io/name: education
+    tsuru.io/app-name: education
     tsuru.io/app-platform: python
     tsuru.io/app-pool: local
     tsuru.io/app-process: web
@@ -22,17 +22,17 @@ metadata:
     tsuru.io/is-service: "true"
     tsuru.io/is-stopped: "false"
     tsuru.io/is-tsuru: "true"
-  name: app-web
+  name: education-web
   namespace: default
-  resourceVersion: "8441093"
-  uid: 52fcd1c7-5159-45c0-a300-b9f8dde57021
+  resourceVersion: "15856234"
+  uid: b615240c-f3c3-4b15-bdfb-c96c3476feb8
 spec:
   progressDeadlineSeconds: 600
   replicas: 1
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      tsuru.io/app-name: app
+      tsuru.io/app-name: education
       tsuru.io/app-process: web
       tsuru.io/is-build: "false"
       tsuru.io/is-isolated-run: "false"
@@ -45,12 +45,12 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        tsuru.io/app-name: app
+        tsuru.io/app-name: education
         tsuru.io/app-platform: python
         tsuru.io/app-pool: local
         tsuru.io/app-process: web
         tsuru.io/app-team: admin
-        tsuru.io/app-version: "4"
+        tsuru.io/app-version: "1"
         tsuru.io/is-build: "false"
         tsuru.io/is-isolated-run: "false"
         tsuru.io/is-routable: "true"
@@ -62,6 +62,7 @@ spec:
             - -lc
             - '[ -d /home/application/current ] && cd /home/application/current; exec
               $0 "$@"'
+            - /docker-entrypoint.sh
             - nginx
             - -g
             - daemon off;
@@ -69,18 +70,18 @@ spec:
             - name: TSURU_APPDIR
               value: /home/application/current
             - name: TSURU_APPNAME
-              value: app
+              value: education
             - name: TSURU_SERVICES
               value: "{}"
             - name: TSURU_PROCESSNAME
               value: web
             - name: TSURU_APPVERSION
-              value: "4"
+              value: "1"
             - name: TSURU_HOST
               value: http://tsuru-api.tsuru-system.svc.cluster.local
             - name: PORT_web
               value: "80"
-          image: tsuru-registry.tsuru-system.svc.cluster.local/app-app:v4
+          image: tsuru-registry.tsuru-system.svc.cluster.local/app-education:v1
           imagePullPolicy: IfNotPresent
           lifecycle:
             preStop:
@@ -89,7 +90,7 @@ spec:
                   - sh
                   - -c
                   - sleep 10 || true
-          name: app-web
+          name: education-web
           securityContext:
             runAsUser: 0
             runAsGroup: 0
@@ -113,25 +114,25 @@ spec:
       schedulerName: default-scheduler
       securityContext:
         runAsUser: 1000
-      serviceAccount: app-app
-      serviceAccountName: app-app
-      subdomain: app-web-units
+      serviceAccount: app-education
+      serviceAccountName: app-education
+      subdomain: education-web-units
       terminationGracePeriodSeconds: 40
 status:
   conditions:
-    - lastTransitionTime: "2024-11-30T01:34:14Z"
-      lastUpdateTime: "2024-12-11T15:45:38Z"
-      message: ReplicaSet "app-web-7dcc4d59b7" has successfully progressed.
+    - lastTransitionTime: "2025-01-02T02:39:39Z"
+      lastUpdateTime: "2025-01-02T02:39:43Z"
+      message: ReplicaSet "education-web-5594567c86" has successfully progressed.
       reason: NewReplicaSetAvailable
       status: "True"
       type: Progressing
-    - lastTransitionTime: "2024-12-11T15:45:39Z"
-      lastUpdateTime: "2024-12-11T15:45:39Z"
+    - lastTransitionTime: "2025-01-02T02:50:46Z"
+      lastUpdateTime: "2025-01-02T02:50:46Z"
       message: Deployment does not have minimum availability.
       reason: MinimumReplicasUnavailable
       status: "False"
       type: Available
-  observedGeneration: 9
+  observedGeneration: 1
   replicas: 1
   unavailableReplicas: 1
   updatedReplicas: 1

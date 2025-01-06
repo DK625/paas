@@ -7,10 +7,12 @@
             <q-card-section>
               <div class="text-h6">Logs</div>
             </q-card-section>
-            <q-separator/>
+            <q-separator />
             <q-card-section class="q-pa-none">
               <div class="row">
-                <div class="col-xs-12 window-height text-green-5 q-pa-sm log-box">
+                <div
+                  class="col-xs-12 window-height text-green-5 q-pa-sm log-box"
+                >
                   <iframe
                     v-if="iframeUrl"
                     class="fit"
@@ -32,43 +34,40 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 
 export default {
-  name: 'AppLogsPage',
-  setup () {
-    const route = useRoute()
-    const appId = ref(route.params.appId)
-    const iframeUrl = ref(null)
+  name: "AppLogsPage",
+  setup() {
+    const route = useRoute();
+    const appId = ref(route.params.appId);
+    const iframeUrl = ref(null);
 
-
-    // IP của nginx server
-    const GRAFANA_URL = 'http://10.3.93.242'
+    const GRAFANA_URL =
+      import.meta.env.VITE_GRAFANA_URL || process.env.GRAFANA_URL;
+    const DASHBOARD_ID =
+      import.meta.env.VITE_DASHBOARD_ID || process.env.DASHBOARD_ID;
 
     const fetchDashboard = async () => {
       try {
-        
-
-        iframeUrl.value = `${GRAFANA_URL}/d/de4ttafvgwohsf/app-log?orgId=1&var-appname=${appId.value}&refresh=10s&from=now-1h&to=now&kiosk=embedded&theme=light`
-
-
+        iframeUrl.value = `${GRAFANA_URL}/d/${DASHBOARD_ID}/app-log?orgId=1&var-appname=${appId.value}&refresh=5s&from=now-1h&to=now&kiosk=embedded&theme=light`;
       } catch (error) {
-        console.error('Error fetching dashboard:', error)
+        console.error("Error fetching dashboard:", error);
         // Có thể thêm xử lý lỗi ở đây (hiển thị thông báo lỗi, etc.)
       }
-    }
+    };
 
     onMounted(() => {
-      fetchDashboard()
-    })
+      fetchDashboard();
+    });
 
     return {
       iframeUrl,
-      appId
-    }
-  }
-}
+      appId,
+    };
+  },
+};
 </script>
 
 <style scoped>
